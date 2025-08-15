@@ -1,0 +1,129 @@
+
+MATPLOTLIB
+
+
+
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+#Basic Graph
+# x=[0,1,2,3,4,5]
+# y=[0,2,4,6,8,10]
+
+# plt.plot(x, y, label='2x', color="green", linewidth=1, marker=".", markersize=15, markeredgecolor='red')
+plt.plot(x,y, 'b^--', label='2x')
+
+#line 2
+x2 = np.arange(0, 4.5, 0.5)
+# First curve: x^2
+plt.plot(x2, x2**2, 'b', label='x^2')
+# Second curve: x^3 (just as an example of a second function)
+plt.plot(x2, x2**3, 'r--', label='x^3')
+
+plt.xlabel('x values')
+plt.ylabel('y values')
+plt.title('Example Plot')
+plt.legend()
+plt.show()
+
+plt.title("Basic Graph" , fontdict={ 'fontsize':20})
+plt.xlabel("X-Axis")
+plt.ylabel("Y-Axis")
+plt.xticks([0,1,2,3,4])
+plt.yticks([0,2,4,6,8,10])
+plt.legend()
+plt.show()
+
+# #resize grpah
+plt.figure(figsize=(5,3), dpi=400)
+plt.savefig('Graph.png' , dpi=400)
+
+#bar chart
+labels = ['A', 'B', 'C']
+values = [1, 4, 2]
+# bars = plt.bar(labels, values)
+# bars[0].set_hatch('/')
+# bars[1].set_hatch('*')
+# bars[2].set_hatch('O')
+
+patterns = ['/','O','*']
+for bar in bars:
+    bar.set_hatch(patterns.pop(0))
+
+
+plt.figure(figsize=(5,3))
+plt.show()
+
+#Line Graph Example
+gas = pd.read_csv('/content/gas_prices.csv')
+plt.figure(figsize=(8,5))
+plt.plot(gas.Year, gas.USA, 'r.-' , label ="USA" )
+plt.plot(gas.Year, gas.Canada, 'b.-' , label ="Canada" )
+plt.plot(gas.Year, gas['South Korea'], 'g.-' , label ="South Korea" )
+
+#using loop for all countries
+# for country in gas:
+#     if country != 'Year':
+#         plt.plot(gas.Year, gas[country], marker='.', label=country)
+
+
+plt.plot(gas.Year, gas.France, 'y.-' , label ="France" )
+plt.title(' Gas Prices in (USD)')
+plt.xlabel('Year')
+plt.ylabel('Dollars/Gallon')
+plt.legend()
+#plt.xticks(gas.Year[::3].tolist()+[2011])
+plt.savefig('Gas_Prices.png', dpi=400)
+plt.show()
+
+
+# Histogram Example
+fifa = pd.read_csv('/content/fifa_data.csv')
+fifa.head(5)
+bins = [0,10,20,30,40,50,60,70,80,90,100]
+plt.hist(fifa.Overall, bins=bins , color='c')
+plt.xticks(bins)
+plt.xlabel('Number of Players')
+plt.ylabel('Distribution of Player Ratings')
+plt.show()
+# I fixed the column name from 'Preferred foot' to 'Preferred Foot'
+left = fifa.loc[fifa['Preferred Foot'] == 'Left'].count().iloc[0]
+right = fifa.loc[fifa['Preferred Foot'] == 'Right'].count().iloc[0]
+
+labels=['Left' , 'Right']
+
+plt.pie([left,right], labels=labels, autopct='%.2f%%')
+plt.title('Foot Preference of FIFA Players')
+plt.show()
+fifa['Weight'] = [x.strip('lbs') if isinstance(x,str) else x for x in fifa['Weight']]
+fifa['Weight'][0]
+# remove "lbs"
+fifa['Weight'] = fifa['Weight'].apply(lambda x: x.strip('lbs') if isinstance(x, str) else x)
+plt.style.use('ggplot')
+fifa['Weight'] = pd.to_numeric(fifa['Weight'], errors='coerce')
+# convert to numeric
+fifa['Weight'] = pd.to_numeric(fifa['Weight'], errors='coerce')
+light  = fifa.loc[fifa['Weight'] < 125].count()[0]
+medium = fifa.loc[(fifa['Weight'] >= 125) & (fifa['Weight'] < 150)].count()[0]
+heavy  = fifa.loc[fifa['Weight'] >= 150].count()[0]
+
+weights = [light, medium, heavy]
+labels = ['Under 125', '125-150', 'Over 150']
+explode = (.1,0,0.4)
+weights = [light, medium, heavy]
+labels  = ['Light', 'Medium', 'Heavy']
+explode = (0.1, 0, 0)
+
+plt.title('Weight Distribution of Players (in lbs)')
+
+plt.pie(weights, labels=labels, autopct='%.2f%%', pctdistance=0.8, explode=explode)
+plt.show()
+
+plt.style.use('default')
+barcelona = fifa.loc[fifa['Club'] == 'FC Barcelona']['Overall']
+madrid = fifa.loc[fifa['Club'] == 'Real Madrid']['Overall']
+revs = fifa.loc[fifa['Club'] == 'New AI Art']['Overall']
+labels = ['FC Barcelona', 'Real Madrid',"New AI Art"]
+plt.boxplot([barcelona, madrid, revs],tick_labels=labels)
+plt.show()
+
