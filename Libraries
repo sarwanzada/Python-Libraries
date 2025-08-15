@@ -1,0 +1,432 @@
+
+
+
+
+
+
+
+
+
+
+
+                     
+
+                      PANDAS
+
+
+
+
+import pandas as pd
+df = pd.read_csv("/content/sample_data/weather.csv")
+df
+
+df.pivot(index='city',columns='date', values='humidity')
+
+df = pd.read_csv('/content/sample_data/weather2.csv')
+df
+
+#df.pivot_table(index='city',columns='date', aggfunc='diff,sum,mean')
+df.pivot_table(index='city',columns='date', margins=True)
+
+df = pd.read_csv('/content/sample_data/weather3.csv')
+df
+df['date']=pd.to_datetime(df['date'])
+type(df['date'][0])
+df.pivot_table(index=pd.Grouper(freq='M', key='date'), columns='city')
+
+
+
+#stack and unstack
+import pandas as pd
+df=pd.read_excel("/content/stocks.xlsx",header=[0,1])
+df
+df.stack(level=0)
+df_stacked=df.stack()
+df_stacked
+df_stacked.unstack()
+
+df2=pd.read_excel("/content/sample_data/stocks_3_levels.xlsx",header=[0,1,2])
+df2
+df2.stack(level=0)
+df2.stack(level=1)
+
+    #crosstab
+
+import pandas as pd
+df=pd.read_excel("/content/sample_data/survey.xls")
+df
+pd.crosstab([ df.Sex,df.Nationality],[df.Handedness], margins=True)
+pd.crosstab([ df.Sex,],[df.Handedness], normalize='index')
+import numpy as np
+pd.crosstab([ df.Sex,],[df.Handedness], values=df.Age, aggfunc=np.average )
+
+     #read and write SQL
+
+import pandas as pd
+import sqlalchemy
+! pip install pymysql
+engine = sqlalchemy.create_engine('mysql+pymysql://root:@localhost:3306/application')
+
+
+#time series analysis
+import pandas as pd
+!head /content/aapll\ .csv
+df = pd.read_csv("/content/aapll .csv", parse_dates=["Date"], index_col="Date")
+df.head(5)
+type(df.index [0])
+#df.index
+df.Close.resample('M').mean()
+df.Close.resample('M').mean().plot(kind="bar")
+
+
+import pandas as pd
+df = pd.read_csv("/content/aapl_no_dates.csv")
+df
+df.head()
+rng = pd.date_range(start="6/1/2017",end="6/30/2017", freq='B')
+rng
+df.set_index(rng,inplace=True)
+df
+%matplotlib inline
+df.Close.plot()
+df["2017-06-01":"2016-05-10"].Close.mean()
+df.asfreq('D',method='pad')
+df.asfreq('D',method='bfill')
+df.asfreq('D',method='pad')
+from pandas.tseries.offsets import USFederalHolidayCalendar
+from pandas.tseries.offsets import CustomBusinessDay
+usb = CustomBusinessDay(calendar=USFederalHolidayCalendar())
+usb
+
+
+!pip install matplotlib-venn
+!apt-get -qq install -y libfluidsynth1
+# https://pypi.python.org/pypi/libarchive
+!apt-get -qq install -y libarchive-dev && pip install -U libarchive
+import libarchive
+# https://pypi.python.org/pypi/pydot
+!apt-get -qq install -y graphviz && pip install pydot
+import pydot
+!pip install cartopy
+import cartopy
+
+!apt-get -qq install -y libfluidsynth3
+
+
+import pandas as pd
+df = pd.read_csv("aapl_no_dates.csv")
+df.head()
+rng = pd.date_range(start="7/1/2017", end="7/21/2017", freq='B')
+rng
+from pandas.tseries.holiday import USFederalHolidayCalendar
+from pandas.tseries.offsets import CustomBusinessDay
+
+us_cal = CustomBusinessDay(calendar=USFederalHolidayCalendar())
+
+rng = pd.date_range(start="7/1/2017",end="7/23/2017", freq=us_cal)
+rng
+#df.set_index(rng,inplace=True)
+#df.head()
+from pandas.tseries.holiday import AbstractHolidayCalendar, nearest_workday, Holiday
+class myCalendar(AbstractHolidayCalendar):
+    rules = [
+        Holiday('My Birth Day', month=4, day=15),#, observance=nearest_workday),
+    ]
+
+my_bday = CustomBusinessDay(calendar=myCalendar())
+pd.date_range('4/1/2017','4/30/2017',freq=my_bday)
+egypt_weekdays = "Sun Mon Tue Wed Thu"
+
+b = CustomBusinessDay(weekmask=egypt_weekdays)
+
+pd.date_range(start="7/1/2017",periods=20,freq=b)
+b = CustomBusinessDay(holidays=['2017-07-04', '2017-07-10'], weekmask=egypt_weekdays)
+
+pd.date_range(start="7/1/2017",periods=20,freq=b)
+from datetime import datetime
+dt = datetime(2017,7,9)
+dt
+dt + 1*b
+
+import pandas as pd
+dates = ['2017-01-05 2:30:00 PM', 'Jan 5, 2017', '01/05/2017', '2017.01.05', '2017/01/05','20170105' , 'abc']
+pd.to_datetime(dates, format='mixed', errors='ignore')
+pd.to_datetime(dates, format='mixed', errors='coerce')
+t = 1501356749
+pd.to_datetime(t, unit='s')
+dt = pd.to_datetime([t], unit='s')
+dt
+dt.view('int64')
+
+
+
+#Time Series Analysis  Timezone Handling
+import pandas as pd
+y = pd.Period('2016')
+y
+dir(y)
+y.start_time
+y.end_time
+m = pd.Period('2016-1', freq='M')
+m
+m.start_time
+m.end_time
+m+1
+d = pd.Period('2016-02-28', freq='D')
+d
+d+1
+h = pd.Period('2016-02-28 23:00:00', freq='H')
+h
+h+1
+h+pd.offsets.Hour(1)
+#financial analysis
+q = pd.Period('2017Q1')
+q
+q+1
+q.start_time
+q.end_time
+idx = pd.period_range('2011', '2017', freq='Q-JAN')
+idx
+idx[0].start_time
+idx[0].end_time
+q.asfreq('M',how='start')
+q.asfreq('M',how='end')
+d=pd.Period('2016-02-28',freq='D')
+d
+d+1
+h=pd.Period('2016-02-28 23:00:00',freq='H')
+h
+h+1
+h+pd.offsets.Hour(1)
+q=pd.Period('2017Q1',freq='Q-JAN')
+q
+q.start_time
+q.asfreq('D',how='start')
+idx = pd.period_range('2016', '2017', freq='Q-JAN')
+idx
+idx[0].start_time
+idx[0].end_time
+import numpy as np
+ps = pd.Series(np.random.randn(len(idx)), idx)
+ps
+ps.index
+ps['2016']
+ps['2016':'2017']
+pst = ps.to_timestamp()
+pst
+pst.index
+pst.to_period()
+import pandas as pd
+df = pd.read_csv('/content/wmt.csv')
+df
+df.set_index("Line Item",inplace=True)
+df
+df = df.T
+df.index
+df.index = pd.PeriodIndex(df.index, freq="Q-JAN")
+df.index
+df['start date']=df.index.map(lambda x: x.start_time)
+df
+df['end date']=df.index.map(lambda x: x.end_time)
+df
+
+# Timezone Handling
+import pandas as pd
+df =pd.read_csv("/content/msft.csv" , header=1,index_col='Date Time',parse_dates=True)
+df
+df.index
+df = df.tz_localize(tz='US/Eastern')
+df.index
+df = df.tz_convert(tz='Europe/Berlin')
+df
+from pytz import all_timezones
+all_timezones
+df = df.tz_convert(tz='Asia/Calcutta')
+df
+df.index = df.index.tz_convert(tz='Asia/Calcutta')
+df
+rng = pd.date_range(start="2017-08-22 09:00:00",periods=10, freq='30min', tz = 'dateutil/Europe/London')
+s = pd.Series(range(10),index=rng)
+s
+b = s.tz_convert(tz='Europe/Berlin')
+b
+m = s.tz_convert(tz='Asia/Calcutta')
+m
+b + m
+
+
+
+
+import pandas as pd
+df = pd.read_csv("/content/fb.csv",parse_dates=['Date'],index_col='Date')
+df
+df.shift(1)
+df.shift(-1)
+df['Prev Day Price'] = df['Price'].shift(1)
+df
+df['Price Change'] = df['Price'] - df['Prev Day Price']
+df
+df['5 day return'] =  (df['Price'] - df['Price'].shift(5))*100/df['Price'].shift(5)
+df
+df = df[['Price']]
+df
+df = df[['Price']]
+df.index
+df.index = pd.date_range(start='2017-08-15',periods=10, freq='B')
+df.index
+
+
+
+
+
+                         SEABORN
+
+
+
+
+
+
+#Seaborn
+!pip install seaborn
+import seaborn as sns
+import pandas as pd
+import pandas as pd
+import matplotlib.pyplot as plt
+%matplotlib inline
+%reload_ext autoreload
+%autoreload 2
+cs_df = pd.read_csv('/content/ComputerSales.csv')
+print(sns.get_dataset_names())
+
+
+cs_df = pd.read_csv('/content/ComputerSales.csv')
+cs_df
+
+
+print(sns.get_dataset_names())
+
+crash_df = sns.load_dataset('car_crashes')
+crash_df
+
+sns.distplot(crash_df['not_distracted'], kde=False, bins=10)
+
+#joint plot "compare distribution"
+sns.jointplot(x='speeding', y='alcohol', data=crash_df , kind='hex' )
+
+#KDE plot
+sns.kdeplot(crash_df['speeding'])
+
+sns.pairplot(crash_df)
+
+#sns.pairplot(crash_df)
+tips_df = sns.load_dataset('tips')
+tips_df
+sns.pairplot(tips_df, hue='sex', palette="Blues")
+
+
+sns.rugplot(tips_df ['tip'])
+
+sns.set_style('ticks')
+
+plt.figure(figsize=(8,4))
+
+sns.set_context('paper',font_scale=1.4)
+
+sns.jointplot(x='speeding' , y='alcohol' , data=crash_df , kind='reg')
+sns.despinr(left=True, bottom=True)
+
+
+#bar plot
+import numpy as np
+sns.barplot(x='sex',y='total_bill',data=tips_df, estimator=np.median)
+
+#countplot
+sns.countplot(x='sex',data=tips_df)
+
+#box plot
+sns.boxplot(x='day',y='total_bill',data=tips_df , hue='sex')
+plt.legend(loc=0)
+
+#violin plot
+sns.violinplot(x='day',y='total_bill',data=tips_df , hue='sex',split=True)
+plt.legend(loc=0)
+
+#strip plot
+import matplotlib.pyplot as plt
+import seaborn as sns
+plt.figure(figsize=(8, 5))
+sns.stripplot(x='day',y='total_bill',data=tips_df)
+sns.stripplot(x='day',y='total_bill',data=tips_df , jitter=True, hue='sex', dodge=True)
+
+#swarm plot
+sns.violinplot(x='day',y='total_bill',data=tips_df , hue='sex',split=True)
+
+
+#pallete
+plt.figure(figsize=(7,4))
+sns.set_style('dark')
+sns.set_context('talk')
+sns.stripplot(x='day',y='total_bill',data=tips_df, hue='sex', palette= 'magma' )
+#sns.countplot(x='sex',data=tips_df)
+plt.legend(loc=1)
+
+#matrix plot "heat maps"
+crash_df = sns.load_dataset('car_crashes')
+
+crash_mx = crash_df.select_dtypes(include='number').corr()
+
+plt.figure(figsize=(8, 6))
+sns.set_context('paper', font_scale=1.4)
+sns.heatmap(crash_mx, annot=True, cmap='Blues')
+plt.show()
+
+#cluster map
+flights = sns.load_dataset("flights")
+flights = flights.pivot_table(index='month', columns='year', values='passengers')
+flights
+
+flights = sns.load_dataset("flights")
+flights = flights.pivot_table(index='month', columns='year', values='passengers')
+sns.heatmap(flights, cmap='Blues ')
+
+#cluster map
+# iris=sns.load_dataset('iris')
+# species = iris.pop('species')
+# iris.head()
+# sns.clustermap(iris)
+sns.clustermap(flights, standard_scale=1)
+
+#pairgrids
+iris = sns.load_dataset('iris')
+iris_g = sns.PairGrid(iris, hue='species')
+iris_g.map(plt.scatter)
+iris_g.map_diag(plt.hist)
+iris_g.map_upper(plt.scatter)
+iris_g.map_upper(plt.scatter)
+iris_g.map_upper(sns.kdeplot)
+iris_g=sns.PairGrid(iris, hue='species',
+                    x_vars=["sepal_length" , "sepal_width"],y_vars=["petal_length" , "petal_width"])
+iris_g.map(plt.scatter)
+iris_g.add_legend()
+
+
+
+
+#facet grid
+tips_fg = sns.FacetGrid(tips_df, col='time', row='smoker')
+tips_fg.map(plt.scatter, 'total_bill', bins=8)
+tips_fg.map(plt.scatter, 'total_bill', 'tip')
+att_df = sns.load_dataset('attention')
+att_fg = sns.FacetGrid(att_df, col='subject', col_wrap=5, height=1.5)
+att_fg.map(plt.plot, 'solutions', 'score', marker = '.')
+
+
+#regression plots
+plt.figure(figsize=(8, 5))
+sns.set_context('paper', font_scale=1.4)
+sns.lmplot(x='total_bill', y='tip', , data=tips_df, markers=['o','^'])
+scatter_kws = {'s':100, 'linewidth':0.5, 'edgecolors':'white'}
+#sns.regplot(x='total_bill', y='tip', data=tips_df)
+
+
+sns.lmplot(x='total_bill', y='tip', col='sex', row = 'time',data=tips_df, height=8, aspect=0.6)
