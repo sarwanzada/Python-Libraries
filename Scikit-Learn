@@ -1,0 +1,275 @@
+#classification
+#regression
+#data scaling
+#clustreing
+#traing and prediction of model
+#preprocessing and hyperparamater tuning
+#datasets modules
+
+import pandas as pd
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import KNeighborsClassifier
+
+
+X,y  = load_breast_cancer(return_X_y=True)
+X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.2)
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+knn = KNeighborsClassifier()
+knn.fit(X_train_scaled, y_train)
+print(knn.score(X_test_scaled, y_test))
+
+
+import pandas as pd
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import KNeighborsClassifier
+df = load_breast_cancer(as_frame=True).frame
+df
+df.hist(figsize=(10,10))
+plt.tight_layout()
+from sklearn.datasets import make_blobs, make_moons
+X,y = make_blobs(n_samples=500, centers=5)
+X,y = make_moons(noise=0.1,)
+plt.scatter(X[:, 0], X[:, 1] , c=y)
+
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+import numpy as np
+import matplotlib.pyplot as plt # Added import for matplotlib
+
+# Load the Iris dataset
+data = load_iris()
+X, y = data.data, data.target
+
+# Split the data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+# Display lengths of the splits
+len(X_train), len(X_test), len(y_train), len(y_test)
+
+# Plot bincount of y_train
+counts = np.bincount(y_train)
+positions = np.arange(len(data.target_names))
+plt.bar(positions, counts)
+plt.xticks(positions, data.target_names)
+plt.show() # Added plt.show() to display the plot
+
+# Stratified Shuffle Split (Keeping this part as it was in the original code)
+from sklearn.model_selection import StratifiedShuffleSplit
+split = StratifiedShuffleSplit(n_splits=1, test_size=0.2)
+for train_index, test_index in split.split(X, y):
+  X_train, X_test = X[train_index], X[test_index]
+  y_train, y_test = y[train_index], y[test_index]
+
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+import numpy as np
+from sklearn.preprocessing import StandardScaler
+
+X,y = load_iris(return_X_y=True)
+X
+
+scaler = StandardScaler()
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+X_train_scaled
+from sklearn.preprocessing import MinMaxScaler
+X_train_scaled
+
+
+from sklearn.datasets import fetch_openml
+from sklearn.preprocessing import OrdinalEncoder
+
+data = fetch_openml(name="car", version=2, as_frame=True).frame
+columns_to_encode = ['lug_boot', 'safety']
+encoder = OrdinalEncoder(categories=[
+    ['small', 'med', 'big'],
+    ['low', 'med', 'high']
+])
+data[columns_to_encode] = encoder.fit_transform(data[columns_to_encode])
+data
+encoder.inverse_transform(data[columns_to_encode])
+
+data=fetch_openml('adult', as_frame=True).frame
+data
+
+
+
+from sklearn.preprocessing import OneHotEncoder
+data.occupation.value_counts()
+import pandas as pd
+encoder = OneHotEncoder(handle_unknown='ignore', sparse_output=False)
+
+encoded_values = encoder.fit_transform(data[['occupation', 'race']])
+new_cols = encoder.get_feature_names_out(['occupation', 'race'])
+pd.DataFrame(encoded_values, columns=new_cols)
+new_cols
+df_encoded = pd.DataFrame(encoded_values, columns=new_cols, index=data.index)
+ 
+data_final = pd.concat(
+    [data.drop(columns=['occupation', 'race']),df_encoded],axis=1)
+data_final
+
+#Classification
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import KNeighborsClassifier
+X,y = load_breast_cancer(return_X_y=True)
+X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.2)
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.linear_model import LogisticRegression 
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier
+
+clf = KNeighborsClassifier()
+clf.fit(X_train_scaled, y_train)
+clf.score(X_test_scaled, y_test)
+single_instance = X_test_scaled[0]
+single_instance
+clf.predict([single_instance])
+y_train[1]
+clf.predict_proba([single_instance])
+
+#Regression
+from sklearn.datasets import fetch_california_housing
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import KNeighborsRegressor
+X,y = fetch_california_housing(return_X_y=True)
+X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.2)
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+from sklearn.linear_model import LinearRegression , Lasso , Ridge , ElasticNet
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.svm import SVR
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.tree import DecisionTreeRegressor
+reg = LinearRegression()
+reg.fit(X_train_scaled, y_train)
+reg.score(X_test_scaled, y_test)
+single_instance = X_test_scaled[0]
+single_instance
+reg.predict([single_instance])
+y_train[1]
+
+from sklearn.datasets import make_blobs
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import KMeans
+X,y = make_blobs(n_samples=500, centers=5, random_state=42)
+X
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+import matplotlib.pyplot as plt
+plt.scatter(X_scaled[:, 0], X_scaled[:, 1])
+kmeans = KMeans(n_clusters=5)
+kmeans.fit(X_scaled)
+plt.scatter(X_scaled[:, 0], X_scaled[:, 1], c=y)
+
+
+#DBScan
+from sklearn.datasets import make_moons
+import numpy as np
+from sklearn.preprocessing import StandardScaler
+import matplotlib.pyplot as plt
+
+X, y = make_moons(n_samples=500, noise=0.05, random_state=42)
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+plt.scatter(X_scaled[:, 0], X_scaled[:, 1])
+kmeans = KMeans(n_clusters=5)
+kmeans.fit(X_scaled)
+plt.scatter(X_scaled[:, 0], X_scaled[:, 1], c=y)
+
+from sklearn.datasets import fetch_openml
+from sklearn.decomposition import PCA
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import make_pipeline
+X,y = fetch_openml('mnist_784', return_X_y=True)
+X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.2, random_state=0)
+pca = PCA(n_components=30)
+X_train_pca = pca.fit_transform(X_train)
+X_test_pca = pca.transform(X_test)
+
+from sklearn.neighbors import KNeighborsClassifier
+clf = KNeighborsClassifier()
+clf.fit(X_train_pca, y_train)
+print(clf.score(X_test_pca, y_test))
+pca.explained_variance_ratio_
+np.sum(pca.explained_variance_ratio_)
+clf.score(X_test_pca, y_test)
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+y_pred = clf.predict(X_test_pca)
+accuracy_score(y_test, y_pred)
+precision_score(y_test, y_pred, average='weighted') 
+recall_score(y_test, y_pred, average='weighted') 
+f1_score(y_test, y_pred, average='weighted')
+
+from sklearn.datasets import load_breast_cancer
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import KNeighborsClassifier
+X,y = load_breast_cancer(return_X_y=True)
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+from sklearn.model_selection import cross_val_score
+clf = KNeighborsClassifier()
+scores = cross_val_score(clf, X_scaled, y, cv=5)
+scores
+
+import numpy as np
+np.mean(scores)
+
+from sklearn.datasets import load_breast_cancer
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+X,y = load_breast_cancer(return_X_y=True)
+X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.2, random_state=42) # Added random_state for reproducibility
+param_grid = { 
+    'n_estimators': [10, 50, 100, 200],
+    'max_depth': [None, 10, 20, 30],
+    'min_samples_split': [2,5]
+}
+clf = RandomForestClassifier(n_jobs=-1)
+from sklearn.model_selection import GridSearchCV
+grid_search = GridSearchCV(clf, param_grid, cv=5)
+grid_search.fit(X_train, y_train)
+grid_search.best_params_ 
+grid_search.best_score_ 
+grid_search.score(X_test, y_test) 
+
+
+from sklearn.datasets import load_breast_cancer
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+X,y = load_breast_cancer(return_X_y=True)
+X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.2, random_state=42)
+
+from sklearn.pipeline import make_pipeline
+pipe = make_pipeline(
+    StandardScaler(),
+    PCA(n_components=30), 
+    RandomForestClassifier() 
+)
+pipe.fit(X_train, y_train)
+pipe.score(X_test, y_test)
