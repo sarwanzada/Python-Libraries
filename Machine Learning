@@ -1,0 +1,423 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn import linear_model
+df = pd.read_csv('/content/homeprices.csv')
+df
+%matplotlib inline
+plt.xlabel('area (sq ft)')
+plt.ylabel('price(USD)')
+plt.scatter(df.area,df.price,color='red',marker='+')
+reg = linear_model.LinearRegression()
+reg.fit(df[['area']],df.price)
+reg.predict([[3300]])
+reg.coef_
+reg.intercept_
+135.7876*3300+180601.43835
+
+
+ #single variable regression
+import pandas as pd
+import numpy as np
+from sklearn import linear_model
+df = pd.read_csv('/content/homeprices (1).csv')
+df
+import math
+median_bedrooms = math.floor(df['bedrooms'].median())
+median_bedrooms
+df['bedrooms'] = df.bedrooms.fillna(median_bedrooms)
+df
+reg = linear_model.LinearRegression()
+reg.fit(df[['area','bedrooms','age']],df.price)
+reg.coef_
+reg.intercept_
+reg.predict([[3000,3,15]])
+
+
+
+
+
+ #multiple variable regression
+import pandas as pd
+import numpy as np
+from sklearn import linear_model
+d = pd.read_csv('/content/hiring.csv')
+d.experience = d.experience.fillna('zero')
+d
+from word2number import w2n
+d.experience = d.experience.apply(w2n.word_to_num)
+d
+import math
+median_test_score = math.floor(d['test_score(out of 10)'].mean())
+median_test_score
+d['test_score(out of 10)'] = d['test_score(out of 10)'].fillna(median_test_score)
+d
+reg = linear_model.LinearRegression()
+reg.fit(d[['experience','test_score(out of 10)','interview_score(out of 10)']],d['salary($)'])
+reg.predict([[2,9,6]])
+reg.predict ([[12,10,10]])
+
+# #gradient descent and cost function
+import numpy as np
+
+def gradient_descent(x, y):
+    m_curr = b_curr = 0
+    iterations = 100
+    n = len(x)
+    learning_rate = 0.001
+
+    for i in range(iterations):
+        y_predicted = m_curr * x + b_curr
+        md = -(2/n) * sum(x * (y - y_predicted))
+        bd = -(2/n) * sum(y - y_predicted)
+        m_curr = m_curr - learning_rate * md
+        b_curr = b_curr - learning_rate * bd
+        cost = (1/n) * sum((y - y_predicted) ** 2)
+        print(f"m {m_curr}, b {b_curr}, cost {cost}, iteration {i}")
+
+x = np.array([1, 2, 3, 4, 5])
+y = np.array([5, 7, 9, 11, 13])
+
+gradient_descent(x, y)
+
+#Save Model Using Joblib And Pickle
+import pandas as pd
+import numpy as np
+from sklearn import linear_model
+df = pd.read_csv("/content/homepricesss.csv")
+df.head()
+model = linear_model.LinearRegression()
+model.fit(df[['area']],df['price'])
+model.coef_
+model.intercept_
+model.predict(np.array([[5000]]))
+import pickle
+with open ('model_pickle', 'wb') as f:
+  pickle.dump(model,f)
+with open ('model_pickle', 'rb') as f:
+  mp = pickle.load(f)
+  mp.predict(np.array([[500]]))
+import joblib
+joblib.dump(model, 'model_joblib')
+mj = joblib.load('model_joblib')
+mj.predict(np.array([[500]]))
+mj.coef_
+mj.intercept_
+
+# Dummy Variables and One Hot Encoder
+import pandas as pd
+df = pd.read_csv("/content/one hot homeprices (2).csv")
+df
+dummies = pd.get_dummies(df.town)
+dummies
+merged = pd.concat([df,dummies],axis='columns')
+merged
+final = merged.drop(['town', 'west windsor'], axis='columns')
+final
+
+from sklearn.linear_model import LinearRegression
+model = LinearRegression()
+X = final.drop('price', axis='columns')
+X
+y = final.price
+model.fit(X,y)
+model.predict([[2800,0,1]])
+model.predict([[3400,0,0]])
+model.score(X,y)
+from sklearn.preprocessing import LabelEncoder
+le = LabelEncoder()
+dfle = df
+dfle.town = le.fit_transform(dfle.town)
+dfle
+X = dfle[['town','area']].values
+y = dfle.price
+y
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.compose import ColumnTransformer
+ct = ColumnTransformer([('town', OneHotEncoder(), [0])], remainder = 'passthrough')
+X = ct.fit_transform(X)
+X
+x = X[:,1:]
+x
+model.fit(x,y)
+model.predict([[1,0,2800]])
+model.predict([[0,1,3400]])
+
+import pandas as pd
+import numpy as np
+df = pd.read_csv("/content/carprices.csv")
+df
+dummies = pd.get_dummies(df['Car Model'])
+dummies
+merged = pd.concat([df,dummies],axis='columns')
+merged
+merged = pd.concat([df,dummies], axis='columns')
+merged
+final = merged.drop(["Car Model","Mercedez Benz C class"], axis='columns')
+final
+X = final.drop('Sell Price($)', axis='columns')
+X
+y = final['Sell Price($)']
+y
+
+from sklearn.linear_model import LinearRegression
+model = LinearRegression()
+
+model.fit(X,y)
+model.score(X,y)
+model.predict([[45000,4,0,0]])
+model.predict([[86000,7,0,1]])
+
+
+#Training and Testing Data
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+%matplotlib inline
+from sklearn.linear_model import LinearRegression
+
+# df = pd.read_csv("/content/carprices.csv")
+# df
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.2)
+len(X_train)
+len(X_test)
+clf = LinearRegression()
+clf.fit(X_train, y_train)
+clf.score(X_test,y_test)
+
+#Logistic Regression
+#Classicfication (Binary and Multiclass)
+# sigmoid and logit
+import pandas as pd
+from matplotlib import pyplot as plt
+%matplotlib inline
+df = pd.read_csv("/content/insurance_data.csv")
+df.head()
+plt.scatter(df.age,df.bought_insurance, marker = '+', color = 'red')
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(df[['age']],df.bought_insurance,train_size=0.9)
+X_test
+X_train
+from sklearn.linear_model import LogisticRegression
+model = LogisticRegression()
+model.fit(X_train, y_train)
+model.predict(X_test)
+model.score(X_test,y_test)
+model.predict_proba(X_test)
+model.predict(pd.DataFrame({'age': [56]}))
+
+#Multiclass Classification logistic regression
+%matplotlib inline
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_digits
+digits = load_digits()
+dir(digits)
+digits.data[0]
+plt.gray()
+plt.matshow(digits.images[0])
+plt.imshow(digits.images[0])
+plt.show()
+plt.gray()
+for i in range(5):
+  plt.matshow(digits.images[i])
+  plt.show()
+  digits.target[0:5]
+  from sklearn.model_selection import train_test_split
+  X_train, X_test, y_train, y_test = train_test_split(digits.data,digits.target, test_size=0.2)
+  len(X_train)
+  len(X_test)
+  from sklearn.linear_model import LogisticRegression
+  model = LogisticRegression()
+  model.fit(X_train, y_train)
+  model.score(X_test, y_test)
+  model.predict(X_test[0:5])
+  import matplotlib.pyplot as plt
+  plt.matshow(digits.images[0])
+  plt.show()
+  digits.target[6]
+  y_predicted = model.predict(X_test)
+  from sklearn.metrics import confusion_matrix
+  cm = confusion_matrix(y_test, y_predicted)
+  #seaborn for visualization
+  import seaborn as sn
+  plt.figure(figsize = (10,7))
+  sn.heatmap(cm, annot=True)
+
+
+# Use sklearn.datasets iris flower dataset to train your model using logistic regression. You need to figure out accuracy of your model and use that to predict different samples in your test dataset. In iris dataset there are 150 samples containing following features,
+# Sepal Length
+# Sepal Width
+# Petal Length
+# Petal Width
+# Using above 4 features you will clasify a flower in one of the three categories,
+# Setosa
+# Versicolour
+# Virginica
+
+from sklearn.datasets import load_iris
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+
+iris = load_iris()
+X, y = iris.data, iris.target
+
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+model = LogisticRegression(max_iter=200)
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Model Accuracy: {accuracy:.2f}")
+
+for i in range(5):
+    sample = X_test[i].reshape(1, -1)
+    prediction = model.predict(sample)
+    print(f"Sample {i+1}: Features={X_test[i]}, Predicted={iris.target_names[prediction][0]}, Actual={iris.target_names[y_test[i]]}")
+
+
+#Decision Tree
+import pandas as pd
+df = pd.read_csv('/content/salaries.csv')
+df
+inputs = df.drop('salary_more_then_100k',axis='columns')
+target = df['salary_more_then_100k']
+inputs
+target
+from sklearn.preprocessing import LabelEncoder
+le_company = LabelEncoder()
+le_job = LabelEncoder()
+le_degree = LabelEncoder()
+inputs['company_n'] = le_company.fit_transform(inputs['company'])
+inputs['job_n'] = le_job.fit_transform(inputs['job'])
+inputs['degree_n'] = le_degree.fit_transform(inputs['degree'])
+inputs
+inputs_n = inputs.drop(['company','job','degree'],axis='columns')
+inputs_n
+from sklearn import tree
+model = tree.DecisionTreeClassifier()
+model.fit(inputs_n, target)
+model.score(inputs_n,target)
+model.predict([[2,1,0]])
+model.predict([[2,1,1]])
+
+
+import pandas as pd
+df = pd.read_csv('/content/titanic.csv')
+df.head()
+df.drop(['PassengerId','Name','SibSp','Parch','Ticket','Cabin','Embarked'],axis='columns',inplace=True)
+df.head
+inputs = df.drop('Survived',axis='columns')
+target = df.Survived
+inputs.Sex = inputs.Sex.map({'male': 1, 'female': 2})
+
+inputs.Age = inputs.Age.fillna(inputs.Age.mean())
+inputs.head()
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(inputs,target,test_size=0.2)
+len(X_train)
+from sklearn import tree
+model = tree.DecisionTreeClassifier()
+model.fit(X_train,y_train)
+model.score(X_test,y_test)
+model.predict([[3,1,22.0,7.2500]])
+
+# Support Vector Machine using Sklearn (SVM)
+import pandas as pd
+from sklearn.datasets import load_iris
+iris = load_iris()
+dir(iris)
+iris.feature_names
+df = pd.DataFrame(iris.data,columns=iris.feature_names)
+df.head()
+df['target'] = iris.target
+df.head()
+iris.target_names
+df[df.target==1].head()
+iris.target_names
+df['flower_name'] =df.target.apply(lambda x: iris.target_names[x])
+df.head()
+from matplotlib import pyplot as plt
+%matplotlib inline
+df0 = df[df.target==0]
+df1 = df[df.target==1]
+df2 = df[df.target==2]
+df2.head()
+plt.xlabel('sepal length (cm)')
+plt.ylabel('sepal width (cm)')
+plt.scatter(df0['sepal length (cm)'], df0['sepal width (cm)'],color="red",marker='+')
+plt.scatter(df1['sepal length (cm)'], df1['sepal width (cm)'],color="blue",marker='.')
+from sklearn.model_selection import train_test_split
+X = df.drop(['target','flower_name'], axis='columns')
+y = df.target
+X
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+len(X_train)
+from sklearn.svm import SVC #(SVC classifier)
+model = SVC()
+model = SVC(kernel='linear')
+model.fit(X_train, y_train)
+model.score(X_test, y_test)
+
+#Random Forest Algorithm (RFA)
+import pandas as pd
+from sklearn.datasets import load_digits
+digits = load_digits()
+dir(digits)
+
+%matplotlib inline
+import matplotlib.pyplot as plt
+plt.gray()
+for i in range(4):
+  plt.matshow(digits.images[i])
+  plt.show()
+
+digits.data[:5]
+df = pd.DataFrame(digits.data)
+df.head()
+df['target']=digits.target
+df.head()
+
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(df.drop(['target'],axis='columns'),digits.target,test_size=0.2)
+len(X_train)
+from sklearn.ensemble import RandomForestClassifier
+model = RandomForestClassifier(n_estimators=20)
+model.fit(X_train, y_train)
+model.score(X_test, y_test)
+
+y_predicted = model.predict(X_test)
+from sklearn.metrics import confusion_matrix
+cm = confusion_matrix (y_test,y_predicted)
+cm
+%matplotlib inline
+import seaborn as sn
+plt.figure(figsize = (10,7))
+sn.heatmap(cm, annot=True)
+plt.xlabel('Predicted')
+plt.ylabel('Truth')
+
+from sklearn.datasets import load_iris
+iris = load_iris()
+dir(iris)
+import pandas as pd
+df = pd.DataFrame(iris.data, columns=iris.feature_names)
+df.head()
+df['target'] = iris.target
+df.head()
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(df.drop(['target'],axis='columns'),iris.target,test_size=0.2)
+from sklearn.ensemble import RandomForestClassifier
+model = RandomForestClassifier(n_estimators=20)
+model.fit(X_train, y_train)
+model.score(X_test, y_test)
+model = RandomForestClassifier(n_estimators=40)
+model.fit(X_train, y_train)
+model.score(X_test, y_test)
